@@ -1,26 +1,24 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "../styles/tokens.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Brand colors */
+  --color-np-primary: #0B1D3A;
+  --color-np-gold: #FDB927;
+  --color-np-slate: #506680;
+  --color-np-emerald: #1A7F5F;
+  --color-np-champagne: #F7F5EE;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Sport colors */
+  --color-sport-football: #FDB927;
+  --color-sport-flag-football: #E8C87A;
+  --color-sport-mens-basketball: #4A90D9;
+  --color-sport-womens-basketball: #7B68EE;
+  --color-sport-womens-soccer: #1A7F5F;
+  --color-sport-esports: #00E5FF;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-primary);
 }

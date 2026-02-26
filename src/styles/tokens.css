@@ -1,0 +1,188 @@
+/* ================================================
+   NEXTPLAY NEXUS — DESIGN TOKENS v2.0
+   NIL Sports Platform | Sports Coverage:
+   Football · Women's Flag Football · Men's Basketball
+   Women's Basketball · Women's Soccer · ESports
+   ================================================ */
+
+:root {
+  /* === BRAND COLORS === */
+  --color-primary: #0B1D3A;
+  --color-gold: #FDB927;
+  --color-slate: #506680;
+  --color-emerald: #1A7F5F;
+  --color-champagne: #F7F5EE;
+  --color-graphite: #3E3E3E;
+
+  /* === SPORT TAG COLORS === */
+  --sport-football: #FDB927;
+  --sport-flag-football: #E8C87A;
+  --sport-mens-basketball: #4A90D9;
+  --sport-womens-basketball: #7B68EE;
+  --sport-womens-soccer: #1A7F5F;
+  --sport-esports: #00E5FF;
+
+  /* === SPORT GRADIENTS === */
+  --grad-football: linear-gradient(135deg, #FDB927 0%, #B8860B 100%);
+  --grad-flag-football: linear-gradient(135deg, #E8C87A 0%, #FDB927 100%);
+  --grad-mens-basketball: linear-gradient(135deg, #0B1D3A 0%, #4A90D9 100%);
+  --grad-womens-basketball: linear-gradient(135deg, #7B68EE 0%, #C084FC 100%);
+  --grad-womens-soccer: linear-gradient(135deg, #1A7F5F 0%, #34D399 100%);
+  --grad-esports: linear-gradient(135deg, #001824 0%, #00E5FF 100%);
+
+  /* === DARK DASHBOARD THEME === */
+  --bg-app: #080F1E;
+  --bg-card: rgba(11, 29, 58, 0.8);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(253, 185, 39, 0.3);
+  --text-primary: #F7F5EE;
+  --text-secondary: #8FA3B8;
+  --text-muted: rgba(247, 245, 238, 0.4);
+
+  /* === MOTION TOKENS === */
+  --motion-instant: 80ms;
+  --motion-fast: 150ms;
+  --motion-base: 280ms;
+  --motion-slow: 450ms;
+  --motion-cinematic: 800ms;
+
+  --ease-sport: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-impact: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-esports: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* === TYPOGRAPHY === */
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+  --font-sub: 'Poppins', sans-serif;
+  --font-callout: 'Raleway', sans-serif;
+  --font-data: 'Roboto Mono', monospace;
+
+  /* === SPACING === */
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px;
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+
+  /* === SHADOWS === */
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  --shadow-sport-glow: 0 0 24px var(--sport-color, var(--color-gold));
+  --shadow-esports-glow: 0 0 16px #00E5FF, 0 0 48px rgba(0, 229, 255, 0.3);
+}
+
+/* ===== KEYFRAME ANIMATIONS ===== */
+
+@keyframes stadiumEntrance {
+  from { opacity: 0; transform: translateY(40px); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes slideReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0% 0 0); }
+}
+@keyframes ringDraw {
+  from { stroke-dashoffset: var(--ring-circumference, 283); }
+  to { stroke-dashoffset: var(--ring-offset, 0); }
+}
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 8px var(--sport-esports), 0 0 24px var(--sport-esports); opacity: 1; }
+  50% { box-shadow: 0 0 16px var(--sport-esports), 0 0 64px rgba(0,229,255,0.5); opacity: 0.85; }
+}
+@keyframes fieldLinesDraw {
+  from { stroke-dashoffset: 1000; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes hudBracketIn {
+  from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); opacity: 0; }
+  to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; }
+}
+@keyframes digitalFlicker {
+  0%, 90%, 100% { opacity: 1; }
+  92% { opacity: 0.4; }
+  96% { opacity: 0.8; }
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes dataBarRise {
+  from { transform: scaleY(0); transform-origin: bottom; }
+  to { transform: scaleY(1); transform-origin: bottom; }
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+.animate-stadium-entrance { animation: stadiumEntrance var(--motion-slow) var(--ease-out-expo) both; }
+.animate-slide-reveal { animation: slideReveal var(--motion-cinematic) var(--ease-out-expo) both; }
+.animate-neon-pulse { animation: neonPulse 2s ease-in-out infinite; }
+.animate-digital-flicker { animation: digitalFlicker 4s ease infinite; }
+
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 80ms; }
+.stagger-3 { animation-delay: 160ms; }
+.stagger-4 { animation-delay: 240ms; }
+.stagger-5 { animation-delay: 320ms; }
+.stagger-6 { animation-delay: 400ms; }
+
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Sport card top borders */
+.sport-card[data-sport="football"]          { border-top: 4px solid var(--sport-football); }
+.sport-card[data-sport="flag-football"]     { border-top: 4px solid var(--sport-flag-football); }
+.sport-card[data-sport="mens-basketball"]   { border-top: 4px solid var(--sport-mens-basketball); }
+.sport-card[data-sport="womens-basketball"] { border-top: 4px solid var(--sport-womens-basketball); }
+.sport-card[data-sport="womens-soccer"]     { border-top: 4px solid var(--sport-womens-soccer); }
+.sport-card[data-sport="esports"]           { border-top: 4px solid var(--sport-esports); animation: neonPulse 3s ease-in-out infinite; }
+
+/* NIL Ticker */
+.nil-ticker { overflow: hidden; white-space: nowrap; }
+.nil-ticker-inner { display: inline-block; animation: marqueeScroll 30s linear infinite; }
+.nil-ticker-inner:hover { animation-play-state: paused; }
+
+/* Sport grid */
+.sport-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 480px) { .sport-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .sport-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .nil-ticker-inner,
+  .animate-neon-pulse,
+  .sport-card[data-sport="esports"] { animation: none !important; }
+}
+
+/* === RESPONSIVE HELPERS === */
+.hidden-mobile { display: flex; }
+.show-mobile { display: none; }
+@media (max-width: 768px) {
+  .hidden-mobile { display: none !important; }
+  .show-mobile { display: flex !important; }
+}
+
+/* === SCROLLBAR HIDE === */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
