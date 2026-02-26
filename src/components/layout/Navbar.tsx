@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: 'Sports', href: '#sports' },
   { label: 'How It Works', href: '#how-it-works' },
   { label: 'Features', href: '#features' },
-  { label: 'For Programs', href: '#programs' },
+  { label: 'Solutions', href: '/solutions' },
 ];
 
 export default function Navbar() {
@@ -35,11 +35,11 @@ export default function Navbar() {
         zIndex: 100,
         transition: 'background 0.3s ease, box-shadow 0.3s ease',
         background: scrolled
-          ? 'rgba(8, 15, 30, 0.92)'
-          : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none',
-        boxShadow: scrolled ? '0 4px 32px rgba(0,0,0,0.3)' : 'none',
+          ? 'rgba(8, 15, 30, 0.95)'
+          : 'rgba(8, 15, 30, 0.6)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.09)' : '1px solid rgba(255,255,255,0.04)',
+        boxShadow: scrolled ? '0 4px 32px rgba(0,0,0,0.4)' : '0 2px 16px rgba(0,0,0,0.2)',
       }}
     >
       <div style={{

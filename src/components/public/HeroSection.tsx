@@ -86,7 +86,7 @@ export default function HeroSection() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }} style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '52px' }}>
             <Link href="/demo" style={{ display: 'inline-block', padding: '15px 36px', background: 'var(--color-gold)', color: 'var(--color-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none' }}>Request Demo</Link>
-            <Link href="/dashboard" style={{ display: 'inline-block', padding: '15px 36px', background: 'transparent', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none', border: '1px solid var(--border-subtle)' }}>View Dashboard</Link>
+            <Link href="/solutions" style={{ display: 'inline-block', padding: '15px 36px', background: 'transparent', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none', border: '1px solid rgba(253,185,39,0.35)' }}>See Solutions</Link>
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65, duration: 0.6 }} style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
