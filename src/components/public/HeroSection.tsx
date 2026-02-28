@@ -1,5 +1,5 @@
 'use client';
-// NextPlay Nexus — Hero Section v2.1
+// NextPlay Nexus — Hero Section v3.0
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import NILTicker from '@/components/ui/NILTicker';
@@ -85,8 +85,18 @@ export default function HeroSection() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }} style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '52px' }}>
-            <Link href="/demo" style={{ display: 'inline-block', padding: '15px 36px', background: 'var(--color-gold)', color: 'var(--color-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none' }}>Request Demo</Link>
-            <Link href="/solutions" style={{ display: 'inline-block', padding: '15px 36px', background: 'transparent', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none', border: '1px solid rgba(253,185,39,0.35)' }}>See Solutions</Link>
+            <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
+              <Link href="/demo" style={{ display: 'inline-block', padding: '15px 36px', background: 'var(--color-gold)', color: 'var(--color-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none', transition: 'box-shadow 0.2s ease, background 0.2s ease' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(253,185,39,0.45)'; (e.currentTarget as HTMLElement).style.background = '#FFD166'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'none'; (e.currentTarget as HTMLElement).style.background = 'var(--color-gold)'; }}
+              >Request Demo</Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
+              <Link href="/solutions" style={{ display: 'inline-block', padding: '15px 36px', background: 'transparent', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: '0.88rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', borderRadius: '7px', textDecoration: 'none', border: '1px solid rgba(253,185,39,0.35)', transition: 'border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(253,185,39,0.7)'; (e.currentTarget as HTMLElement).style.background = 'rgba(253,185,39,0.06)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(253,185,39,0.1)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(253,185,39,0.35)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
+              >See Solutions</Link>
+            </motion.div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65, duration: 0.6 }} style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
@@ -101,6 +111,94 @@ export default function HeroSection() {
           </motion.div>
         </div>
       </div>
+
+      {/* Floating live deal notification — top right */}
+      <motion.div
+        initial={{ opacity: 0, x: 48, scale: 0.85 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        transition={{ delay: 1.1, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute',
+          top: '18%',
+          right: '5%',
+          zIndex: 20,
+          background: 'rgba(11, 29, 58, 0.9)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(253,185,39,0.25)',
+          borderRadius: '14px',
+          padding: '14px 18px',
+          maxWidth: '220px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          pointerEvents: 'none',
+        }}
+        className="hidden-mobile animate-float"
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1A7F5F', boxShadow: '0 0 8px #1A7F5F' }} />
+          <span style={{ fontFamily: 'var(--font-sub)', fontSize: '0.6rem', color: 'var(--color-gold)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Live Deal</span>
+        </div>
+        <p style={{ fontFamily: 'var(--font-data)', fontSize: '0.72rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.4 }}>
+          WR — State U.<br />
+          <span style={{ color: 'var(--color-gold)' }}>$4,200</span> apparel deal signed
+        </p>
+        <p style={{ fontFamily: 'var(--font-sub)', fontSize: '0.58rem', color: 'var(--text-muted)', margin: '4px 0 0', letterSpacing: '0.04em' }}>2 min ago · Football</p>
+      </motion.div>
+
+      {/* Floating NIL score badge — lower right */}
+      <motion.div
+        initial={{ opacity: 0, y: 32, scale: 0.85 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 1.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute',
+          bottom: '22%',
+          right: '7%',
+          zIndex: 20,
+          background: 'rgba(11, 29, 58, 0.85)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(74,144,217,0.3)',
+          borderRadius: '12px',
+          padding: '12px 16px',
+          boxShadow: '0 6px 24px rgba(0,0,0,0.35)',
+          pointerEvents: 'none',
+        }}
+        className="hidden-mobile"
+      >
+        <div style={{ fontFamily: 'var(--font-sub)', fontSize: '0.58rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: '4px' }}>NIL Readiness</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+          <span style={{ fontFamily: 'var(--font-data)', fontSize: '1.4rem', fontWeight: 700, color: '#4A90D9' }}>94</span>
+          <span style={{ fontFamily: 'var(--font-sub)', fontSize: '0.6rem', color: 'var(--text-secondary)' }}>/100</span>
+        </div>
+        <div style={{ display: 'flex', gap: '3px', marginTop: '6px' }}>
+          {[80,92,88,94,100].map((v, i) => (
+            <div key={i} style={{ width: '4px', height: `${v * 0.18}px`, background: '#4A90D9', borderRadius: '2px', opacity: 0.7 + i * 0.07 }} />
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.8, duration: 0.6 }}
+        style={{
+          position: 'absolute',
+          bottom: '96px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '6px',
+          zIndex: 20,
+          pointerEvents: 'none',
+        }}
+      >
+        <span style={{ fontFamily: 'var(--font-sub)', fontSize: '0.58rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Scroll</span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ animation: 'scrollChevron 1.5s ease-in-out infinite' }}>
+          <path d="M4 7l5 5 5-5" stroke="rgba(253,185,39,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </motion.div>
 
       {/* Diagonal bottom clip */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px', background: 'rgba(8,15,30,0.7)', clipPath: 'polygon(0 100%, 100% 100%, 100% 0)', zIndex: 5 }} />
