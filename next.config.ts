@@ -6,10 +6,11 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' https://api.nextplaynexus.com wss://api.nextplaynexus.com",
+  "connect-src 'self' https://api.nextplaynexus.com wss://api.nextplaynexus.com https://*.supabase.co wss://*.supabase.co https://*.walletconnect.com wss://*.walletconnect.com https://*.walletconnect.org",
+  "frame-src 'self' https://verify.walletconnect.com https://verify.walletconnect.org",
   "frame-ancestors 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  "form-action 'self' https://appleid.apple.com",
 ].join("; ");
 
 const securityHeaders = [
@@ -39,6 +40,14 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "no-store, max-age=0" },
         ],
       },
+      // SSE endpoint: disable proxy buffering so events stream immediately
+      {
+        source: "/api/events",
+        headers: [
+          { key: "X-Accel-Buffering", value: "no" },
+          { key: "Cache-Control", value: "no-cache" },
+        ],
+      },
     ];
   },
 
@@ -58,6 +67,12 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: ["framer-motion"],
+  },
+
+  webpack(config) {
+    // siwe uses an ethers v6 compat shim that Turbopack can't resolve — suppress with webpack alias
+    config.resolve.fallback = { ...config.resolve.fallback, 'ethers': false };
+    return config;
   },
 };
 

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Oswald, Open_Sans, Poppins, Raleway, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import '@rainbow-me/rainbowkit/styles.css';
 import ScrollProgress from "@/components/ui/ScrollProgress";
+import Web3Providers from "@/components/providers/Web3Providers";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -73,8 +75,10 @@ export default function RootLayout({
       className={`${oswald.variable} ${openSans.variable} ${poppins.variable} ${raleway.variable} ${robotoMono.variable}`}
     >
       <body style={{ fontFamily: "var(--font-body)" }}>
-        <ScrollProgress />
-        {children}
+        <Web3Providers>
+          <ScrollProgress />
+          {children}
+        </Web3Providers>
       </body>
     </html>
   );

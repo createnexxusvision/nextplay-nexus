@@ -1,53 +1,42 @@
 'use client';
-// NextPlay Nexus — Sports Dashboard v2.1 — Complete
+// NextPlay Nexus — Sports Dashboard v2.2 — Supabase Connected
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SportGrid from '@/components/sports/SportGrid';
 import NILTicker from '@/components/ui/NILTicker';
 import SportFilterTabs from '@/components/ui/SportFilterTabs';
-import AthleteCard, { type Athlete } from '@/components/athletes/AthleteCard';
+import AthleteCard from '@/components/athletes/AthleteCard';
 import AthleteProgressRing from '@/components/dashboard/AthleteProgressRing';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import ModuleProgress from '@/components/dashboard/ModuleProgress';
 import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import { SPORTS, SportId } from '@/lib/sports';
+import { useAthletes } from '@/lib/hooks/useAthletes';
+import { useDashboardStats } from '@/lib/hooks/useDashboardStats';
 import Link from 'next/link';
 
-const ATHLETES: Athlete[] = [
-  { id:'a1', name:'Marcus Johnson', sport:'football', school:'Lincoln HS', position:'QB', nilScore:82, modulesCompleted:7, totalModules:8, nilDeals:3, totalEarned:'$6,200', initials:'MJ', status:'verified' },
-  { id:'a2', name:'Aaliyah Roberts', sport:'womens-basketball', school:'Westview Univ', position:'PG', nilScore:74, modulesCompleted:5, totalModules:8, nilDeals:2, totalEarned:'$3,600', initials:'AR', status:'active' },
-  { id:'a3', name:'Tyler Kim', sport:'esports', school:'Metro College', position:'IGL', nilScore:91, modulesCompleted:8, totalModules:8, nilDeals:4, totalEarned:'$8,100', initials:'TK', status:'verified' },
-  { id:'a4', name:'Sofia Martinez', sport:'womens-soccer', school:'Riverside HS', position:'MF', nilScore:67, modulesCompleted:4, totalModules:8, nilDeals:1, totalEarned:'$1,200', initials:'SM', status:'active' },
-  { id:'a5', name:'DeShawn Lewis', sport:'mens-basketball', school:'Eastside Univ', position:'SF', nilScore:79, modulesCompleted:6, totalModules:8, nilDeals:3, totalEarned:'$7,500', initials:'DL', status:'active' },
-  { id:'a6', name:'Jordan Flores', sport:'flag-football', school:'Central HS', position:'WR', nilScore:58, modulesCompleted:3, totalModules:8, nilDeals:1, totalEarned:'$750', initials:'JF', status:'pending' },
-];
-
-const SPORT_STATS = {
-  'football': { athletes: 84, nilDeals: 12 },
-  'flag-football': { athletes: 32, nilDeals: 4 },
-  'mens-basketball': { athletes: 48, nilDeals: 9 },
-  'womens-basketball': { athletes: 41, nilDeals: 7 },
-  'womens-soccer': { athletes: 56, nilDeals: 6 },
-  'esports': { athletes: 24, nilDeals: 11 },
-};
-
-const HEADER_STATS = [
-  { label: 'Athletes', value: 285, color: 'var(--color-gold)' },
-  { label: 'Sports', value: 6, color: 'var(--color-emerald)' },
-  { label: 'NIL Deals', value: 49, color: '#4A90D9' },
-  { label: 'Avg Score', value: 74, suffix: '%', color: '#7B68EE' },
-];
+// Skeleton shimmer for loading states
+function SkeletonCard() {
+  return (
+    <div className="glass-card shimmer" style={{ height: '140px', borderRadius: '12px' }} />
+  );
+}
 
 export default function SportsDashboard() {
   const [sportFilter, setSportFilter] = useState<SportId | 'all'>('all');
   const [gridSport, setGridSport] = useState<SportId | null>(null);
   const sport = gridSport ? SPORTS.find(s => s.id === gridSport) : null;
 
-  const filteredAthletes = useMemo(() =>
-    sportFilter === 'all' ? ATHLETES : ATHLETES.filter(a => a.sport === sportFilter),
-    [sportFilter]
-  );
+  const { athletes, loading: athletesLoading } = useAthletes(sportFilter);
+  const { stats, loading: statsLoading } = useDashboardStats();
+
+  const headerStats = [
+    { label: 'Athletes', value: stats.totalAthletes, color: 'var(--color-gold)' },
+    { label: 'Sports', value: stats.totalSports, color: 'var(--color-emerald)' },
+    { label: 'NIL Deals', value: stats.totalDeals, color: '#4A90D9' },
+    { label: 'Avg Score', value: stats.avgNilScore, suffix: '%', color: '#7B68EE' },
+  ];
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-app)', color: 'var(--text-primary)' }}>
@@ -88,14 +77,19 @@ export default function SportsDashboard() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: '0', borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--border-subtle)', background: 'var(--bg-glass)' }}>
-            {HEADER_STATS.map((s, i) => (
-              <div key={s.label} style={{ padding: '14px 24px', textAlign: 'center', borderLeft: i > 0 ? '1px solid var(--border-subtle)' : 'none' }}>
-                <div style={{ fontFamily: 'var(--font-data)', fontSize: '1.4rem', fontWeight: 700, color: s.color, lineHeight: 1 }}>
-                  <AnimatedCounter target={s.value} suffix={s.suffix ?? ''} />
-                </div>
-                <div style={{ fontFamily: 'var(--font-sub)', fontSize: '0.58rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '3px' }}>{s.label}</div>
-              </div>
-            ))}
+            {statsLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="shimmer" style={{ padding: '14px 24px', width: '90px', height: '58px', borderLeft: i > 0 ? '1px solid var(--border-subtle)' : 'none' }} />
+                ))
+              : headerStats.map((s, i) => (
+                  <div key={s.label} style={{ padding: '14px 24px', textAlign: 'center', borderLeft: i > 0 ? '1px solid var(--border-subtle)' : 'none' }}>
+                    <div style={{ fontFamily: 'var(--font-data)', fontSize: '1.4rem', fontWeight: 700, color: s.color, lineHeight: 1 }}>
+                      <AnimatedCounter target={s.value} suffix={s.suffix ?? ''} />
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-sub)', fontSize: '0.58rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '3px' }}>{s.label}</div>
+                  </div>
+                ))
+            }
           </div>
         </motion.div>
 
@@ -119,7 +113,9 @@ export default function SportsDashboard() {
                   <AthleteProgressRing value={72} size={88} sport={sport.id} label="NIL Ready" sublabel="Avg score" />
                   <AthleteProgressRing value={65} size={88} sport={sport.id} label="Modules" sublabel="Completed" />
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'var(--font-data)', fontSize: '1.5rem', fontWeight: 700, color: sport.color }}>{SPORT_STATS[sport.id as keyof typeof SPORT_STATS]?.athletes}</div>
+                    <div style={{ fontFamily: 'var(--font-data)', fontSize: '1.5rem', fontWeight: 700, color: sport.color }}>
+                      {athletes.length}
+                    </div>
                     <div style={{ fontFamily: 'var(--font-sub)', fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Athletes</div>
                   </div>
                 </div>
@@ -130,7 +126,7 @@ export default function SportsDashboard() {
 
         {/* Sport Grid */}
         <div style={{ marginBottom: '3rem' }}>
-          <SportGrid stats={SPORT_STATS} onSportSelect={setGridSport} />
+          <SportGrid onSportSelect={setGridSport} />
         </div>
 
         {/* Athletes section */}
@@ -151,13 +147,21 @@ export default function SportsDashboard() {
           </div>
 
           <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
-            <AnimatePresence>
-              {filteredAthletes.map((athlete, i) => (
-                <motion.div key={athlete.id} layout initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ duration: 0.3, ease: [0.16,1,0.3,1] }}>
-                  <AthleteCard athlete={athlete} index={i} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {athletesLoading ? (
+              Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+            ) : athletes.length === 0 ? (
+              <div style={{ gridColumn: '1 / -1', padding: '48px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-sub)', fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                No athletes found — add athletes via your program portal.
+              </div>
+            ) : (
+              <AnimatePresence>
+                {athletes.map((athlete, i) => (
+                  <motion.div key={athlete.id} layout initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ duration: 0.3, ease: [0.16,1,0.3,1] }}>
+                    <AthleteCard athlete={athlete} index={i} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </motion.div>
         </section>
 

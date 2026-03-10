@@ -4,10 +4,10 @@
 import StatCard from '@/components/ui/StatCard';
 
 const STATS = [
-  { label: 'Athletes Enrolled', value: 285, suffix: '+', description: 'High school and college athletes', color: 'var(--color-gold)' },
-  { label: 'Sports Covered', value: 6, description: 'From Football to ESports', color: 'var(--color-emerald)' },
-  { label: 'NIL Deals Facilitated', value: 49, suffix: '+', description: 'Across all sports and programs', color: '#4A90D9' },
-  { label: 'Avg Deal Value', value: 28, prefix: '$', suffix: 'K', description: 'Per athlete per semester', color: '#7B68EE' },
+  { label: 'Curriculum Modules', value: 18, suffix: '+', description: 'Weeks of structured NIL & player development content per grade level', color: 'var(--color-gold)' },
+  { label: 'Sports We Serve', value: 10, suffix: '+', description: 'All athletes eligible for NIL — every sport, every level', color: 'var(--color-emerald)' },
+  { label: 'NIL Market Size', value: 1.67, prefix: '$', suffix: 'B', description: 'U.S. college NIL market in 2024 — and growing fast', color: '#4A90D9' },
+  { label: 'Athletes Lack NIL Literacy', value: 97, suffix: '%', description: 'Of HS athletes enter college without NIL education — we fix that', color: '#7B68EE' },
 ];
 
 export default function StatsSection() {
@@ -21,7 +21,7 @@ export default function StatsSection() {
             <div style={{ width: '32px', height: '2px', background: 'var(--color-gold)', borderRadius: '2px' }} />
           </div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', letterSpacing: '0.02em', margin: 0 }}>
-            Platform Impact
+            The NIL Education Gap
           </h2>
         </div>
 

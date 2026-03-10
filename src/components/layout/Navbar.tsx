@@ -1,23 +1,29 @@
 'use client';
-// NextPlay Nexus — Public Navbar v3.0
+// NextPlay Nexus — Public Navbar v3.1
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+
+type AuthUser = { initials: string; role: string } | null;
 
 const NAV_LINKS = [
-  { label: 'Sports', href: '#sports' },
   { label: 'How It Works', href: '#how-it-works' },
   { label: 'Features', href: '#features' },
   { label: 'Solutions', href: '/solutions' },
-  { label: 'Intelligence', href: '/intelligence' },
+  { label: 'For Athletes', href: '/onboarding/athlete' },
+  { label: 'NILPOC', href: '#nilpoc' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authUser, setAuthUser] = useState<AuthUser>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -26,6 +32,47 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
+
+  // Detect auth state
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function loadUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setAuthUser(null); return; }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      const name: string = profile?.full_name ?? user.email ?? 'User';
+      const parts = name.trim().split(' ');
+      const initials = parts.length >= 2
+        ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+        : name.slice(0, 2).toUpperCase();
+
+      setAuthUser({ initials, role: profile?.role ?? 'athlete' });
+    }
+
+    loadUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      if (!session) { setAuthUser(null); return; }
+      loadUser();
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setAuthUser(null);
+    router.push('/');
+    router.refresh();
+  }
 
   const isActive = (href: string) =>
     !href.startsWith('#') && (pathname === href || pathname.startsWith(href + '/'));
@@ -60,38 +107,21 @@ export default function Navbar() {
         justifyContent: 'space-between',
       }}>
         {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <motion.div
-            whileHover={{ scale: 1.08, rotate: -4 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            style={{
-              width: 36,
-              height: 36,
-              background: 'var(--color-gold)',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '1rem',
-              color: 'var(--color-primary)',
-              flexShrink: 0,
-              boxShadow: '0 0 0 0 rgba(253,185,39,0)',
-              transition: 'box-shadow 0.2s ease',
-            }}
-          >N²</motion.div>
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: '1.1rem',
-            color: 'var(--text-primary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-          }}>
-            NextPlay <span style={{ color: 'var(--color-gold)' }}>Nexus</span>
-          </span>
+          >
+            <Image
+              src="/npn-logo.svg"
+              alt="NextPlay Nexus"
+              width={160}
+              height={42}
+              priority
+              style={{ display: 'block', height: '42px', width: 'auto' }}
+            />
+          </motion.div>
         </Link>
 
         {/* Desktop nav */}
@@ -158,21 +188,46 @@ export default function Navbar() {
           transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
         >
-          <Link
-            href="/dashboard"
-            style={{
-              fontFamily: 'var(--font-sub)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: 'var(--text-secondary)',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-            className="hidden-mobile"
-          >
-            Sign In
-          </Link>
+          {authUser ? (
+            <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Link href="/dashboard" style={{ textDecoration: 'none' }}>
+                <div
+                  title="Go to Dashboard"
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #FDB927, #B8860B)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    color: '#0B1D3A',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  {authUser.initials}
+                </div>
+              </Link>
+              <button
+                onClick={handleSignOut}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sub)', fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: 0 }}
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/auth/login"
+              style={{ fontFamily: 'var(--font-sub)', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.08em' }}
+              className="hidden-mobile"
+            >
+              Sign In
+            </Link>
+          )}
           <Link
             href="/demo"
             style={{
@@ -257,9 +312,15 @@ export default function Navbar() {
                 </motion.a>
               ))}
               <hr style={{ border: 'none', borderTop: '1px solid var(--border-subtle)', margin: '4px 0' }} />
-              <Link href="/dashboard" onClick={() => setMobileOpen(false)} style={{ fontFamily: 'var(--font-sub)', fontSize: '0.85rem', color: 'var(--text-secondary)', textDecoration: 'none' }}>
-                Sign In →
-              </Link>
+              {authUser ? (
+                <button onClick={() => { setMobileOpen(false); handleSignOut(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sub)', fontSize: '0.85rem', color: 'var(--text-secondary)', padding: 0, textAlign: 'left' }}>
+                  Sign Out →
+                </button>
+              ) : (
+                <Link href="/auth/login" onClick={() => setMobileOpen(false)} style={{ fontFamily: 'var(--font-sub)', fontSize: '0.85rem', color: 'var(--text-secondary)', textDecoration: 'none' }}>
+                  Sign In →
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

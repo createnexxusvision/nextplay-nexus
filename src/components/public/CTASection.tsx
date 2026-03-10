@@ -16,8 +16,15 @@ export default function CTASection() {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return;
     setSubmitting(true);
-    // Lightweight interest capture — no sensitive data
-    await new Promise(r => setTimeout(r, 600));
+    try {
+      await fetch('/api/email-capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, user_type: 'general', source: 'cta_section' }),
+      });
+    } catch (err) {
+      console.error('[cta] email capture failed:', err);
+    }
     setSubmitted(true);
     setSubmitting(false);
   };

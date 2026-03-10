@@ -64,8 +64,8 @@ export default function Footer() {
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {[
                 { label: 'About Us', href: '/demo' },
-                { label: 'Careers', href: '/demo' },
-                { label: 'Intelligence', href: '/intelligence' },
+                { label: 'For Athletes', href: '/onboarding/athlete' },
+                { label: 'NILPOC', href: '/#nilpoc' },
                 { label: 'Solutions', href: '/solutions' },
                 { label: 'Contact', href: '/demo' },
               ].map(item => (
@@ -89,8 +89,8 @@ export default function Footer() {
           {/* Social links */}
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             {[
-              { label: 'X / Twitter', href: 'https://x.com/nextplaynexus', icon: 'M4 4l7 7-7 7M17 4l-7 7 7 7' },
-              { label: 'LinkedIn', href: 'https://linkedin.com/company/nextplaynexus', icon: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z M4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' },
+              { label: 'X / Twitter', href: 'https://x.com/Turtletreeth', icon: 'M4 4l7 7-7 7M17 4l-7 7 7 7' },
+              { label: 'LinkedIn', href: 'https://www.linkedin.com/company/nextplay-nexus/', icon: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z M4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' },
               { label: 'Instagram', href: 'https://instagram.com/nextplaynexus', icon: 'M12 2a10 10 0 0 0 0 20A10 10 0 0 0 12 2zm0 4a6 6 0 0 1 0 12A6 6 0 0 1 12 6zm5.5-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z' },
             ].map(social => (
               <motion.a

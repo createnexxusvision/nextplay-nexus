@@ -1,6 +1,9 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ============================================================
+# NextPlay Nexus — .gitignore
+# SECURITY: Never commit secrets, keys, or credentials.
+# ============================================================
 
-# dependencies
+# --- Dependencies ---
 /node_modules
 /.pnp
 .pnp.*
@@ -10,32 +13,63 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# --- Testing ---
 /coverage
 
-# next.js
+# --- Next.js build artifacts ---
 /.next/
 /out/
-
-# production
 /build
 
-# misc
-.DS_Store
-*.pem
+# --- Environment & Secrets (NEVER commit these) ---
+.env
+.env.*
+!.env.example
+!.env.vault
+.env.keys
 
-# debug
+# --- API Keys & Credentials (belt-and-suspenders) ---
+*.key
+*.pem
+*secret*
+*-secret.*
+*_secret.*
+*token*.txt
+*api-key*.txt
+*apikey*.txt
+Rube-Composio*
+gog-client-secret*
+credentials.json
+*credentials*.json
+service-account*.json
+
+# --- OS & Editor ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+
+# --- Logs ---
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
+# --- TypeScript ---
 *.tsbuildinfo
 next-env.d.ts
+
+# --- Vercel ---
+.vercel
+
+# --- Blockchain / Foundry artifacts ---
+/cache/
+/broadcast/
+
+# --- Local system config ---
+.openclaw_config.yaml
+.obsidian-sync.log
+.dbclient/
+supabase-schema*.sql
