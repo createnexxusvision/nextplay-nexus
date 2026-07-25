@@ -45,6 +45,7 @@ export default function DemoPage() {
   const [form, setForm] = useState({ name: '', title: '', email: '', phone: '', school: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const canSubmit = programType && selectedSports.length > 0 && athleteRange && form.name && form.email && form.school;
 
@@ -52,11 +53,41 @@ export default function DemoPage() {
     setSelectedSports(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1200);
+    setErrorMsg('');
+    // Previously this was a fake setTimeout that always showed success --
+    // no request was ever sent, so every real demo submission was silently
+    // lost. Now actually calls /api/demo, which persists to
+    // demo_requests + email_captures and emails a notification.
+    try {
+      const res = await fetch('/api/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          school: form.school,
+          title: form.title || undefined,
+          phone: form.phone || undefined,
+          programType,
+          sports: selectedSports,
+          athleteRange,
+          message: form.message || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Request failed (${res.status})`);
+      }
+      setSubmitted(true);
+    } catch (err) {
+      console.error('[demo] submission failed:', err);
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong -- please try again.');
+    }
+    setLoading(false);
   }
 
   if (submitted) {
@@ -295,6 +326,9 @@ export default function DemoPage() {
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                   Complete all required fields to submit
                 </p>
+              )}
+              {errorMsg && (
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: '#F87171' }}>{errorMsg}</p>
               )}
             </div>
 

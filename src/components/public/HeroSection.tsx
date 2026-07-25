@@ -13,10 +13,12 @@ const SPORT_PILLS = [
   { label: "Women's Soccer", color: '#1A7F5F', glow: false },
   { label: 'ESports', color: '#00E5FF', glow: true },
 ];
+// Honest, verifiable numbers only -- no fabricated athlete/deal counts.
+// A count-up animation on a year (e.g. "Founded 2025") reads oddly, so this
+// stays to two real platform facts rather than padding to three.
 const HERO_STATS = [
-  { value: 285, suffix: '+', label: 'Athletes' },
-  { value: 6, suffix: '', label: 'Sports' },
-  { value: 49, suffix: '+', label: 'NIL Deals' },
+  { value: 6, suffix: '', label: 'Sports Covered' },
+  { value: 6, suffix: '', label: 'Curriculum Modules' },
 ];
 
 export default function HeroSection() {

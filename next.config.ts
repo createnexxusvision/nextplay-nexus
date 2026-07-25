@@ -69,6 +69,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["framer-motion"],
   },
 
+  // Next.js 16 defaults to Turbopack and now hard-errors when a webpack()
+  // config is present with no turbopack config, in case the webpack config
+  // is load-bearing. It isn't here -- Turbopack doesn't invoke webpack()
+  // and prior deployments already built successfully under Turbopack
+  // without the ethers/siwe alias below actually applying -- so an empty
+  // config is the correct fix, not a workaround (this is Next's own
+  // suggested remedy for this exact error).
+  turbopack: {},
+
   webpack(config) {
     // siwe uses an ethers v6 compat shim that Turbopack can't resolve — suppress with webpack alias
     config.resolve.fallback = { ...config.resolve.fallback, 'ethers': false };

@@ -4,10 +4,10 @@
 import StatCard from '@/components/ui/StatCard';
 
 const STATS = [
-  { label: 'Curriculum Modules', value: 18, suffix: '+', description: 'Weeks of structured NIL & player development content per grade level', color: 'var(--color-gold)' },
-  { label: 'Sports We Serve', value: 10, suffix: '+', description: 'All athletes eligible for NIL — every sport, every level', color: 'var(--color-emerald)' },
-  { label: 'NIL Market Size', value: 1.67, prefix: '$', suffix: 'B', description: 'U.S. college NIL market in 2024 — and growing fast', color: '#4A90D9' },
-  { label: 'Athletes Lack NIL Literacy', value: 97, suffix: '%', description: 'Of HS athletes enter college without NIL education — we fix that', color: '#7B68EE' },
+  { label: 'Curriculum Modules', value: 6, suffix: '', description: 'Core NIL & player development modules — rights, contracts, brand, financial literacy, and more', color: 'var(--color-gold)' },
+  { label: 'Sports Covered', value: 6, suffix: '', description: 'Football, Flag Football, Men’s & Women’s Basketball, Women’s Soccer, ESports', color: 'var(--color-emerald)' },
+  { label: 'NIL Market Size', value: 1.67, prefix: '$', suffix: 'B', description: 'Total U.S. NIL market, 2024–25 season (Opendorse)', color: '#4A90D9' },
+  { label: 'Athletes Lack Financial Education', value: 65, suffix: '%', description: 'Of college athletes surveyed at orientation had received none in high school', color: '#7B68EE' },
 ];
 
 export default function StatsSection() {

@@ -11,21 +11,30 @@ export default function CTASection() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return;
     setSubmitting(true);
+    setErrorMsg('');
     try {
-      await fetch('/api/email-capture', {
+      const res = await fetch('/api/email-capture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, user_type: 'general', source: 'cta_section' }),
       });
+      // Previously this claimed success unconditionally, even on a failed
+      // request -- only show the success state once the API actually
+      // confirms it.
+      if (!res.ok) {
+        throw new Error(`Request failed (${res.status})`);
+      }
+      setSubmitted(true);
     } catch (err) {
       console.error('[cta] email capture failed:', err);
+      setErrorMsg("Something went wrong -- please try again in a moment.");
     }
-    setSubmitted(true);
     setSubmitting(false);
   };
 
@@ -154,6 +163,9 @@ export default function CTASection() {
                 {submitting ? 'Sending...' : 'Subscribe'}
               </button>
             </form>
+          )}
+          {errorMsg && (
+            <p style={{ marginTop: '10px', fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#F87171' }}>{errorMsg}</p>
           )}
         </div>
       </motion.div>

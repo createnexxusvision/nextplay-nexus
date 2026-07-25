@@ -1,7 +1,13 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const PROTECTED_PATHS = ['/dashboard', '/portal', '/admin', '/onboarding'];
+// /intelligence added 2026-07-25: it's a competitive-intelligence dashboard
+// (named competitors + threat scores + notes on the other two ventures in
+// the portfolio, not just NextPlay) that was previously unauthenticated
+// and linked directly from the public nav -- anyone, including the
+// competitors it names, could view it. Treat as protected like the rest
+// of the internal surfaces.
+const PROTECTED_PATHS = ['/dashboard', '/portal', '/admin', '/onboarding', '/intelligence'];
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
