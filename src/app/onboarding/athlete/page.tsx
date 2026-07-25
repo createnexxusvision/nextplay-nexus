@@ -6,7 +6,6 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { createClient } from '@/lib/supabase/client';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -492,6 +491,7 @@ export default function AthleteQuestionnaire() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<{ badge: 'Rookie' | 'Rising' | 'Ready'; track: string } | null>(null);
+  const [saved, setSaved] = useState<boolean | null>(null); // null = not attempted yet, distinct from false = attempted and failed
   const [direction, setDirection] = useState(1);
 
   const set = <K extends keyof FormData>(key: K, value: FormData[K]) =>
@@ -522,22 +522,27 @@ export default function AthleteQuestionnaire() {
     if (!canAdvance()) return;
     setSubmitting(true);
     const computed = computeNILBadge(form);
+    let didSave = false;
     try {
-      const supabase = createClient();
-      await supabase.from('athlete_profiles').insert({
-        name: form.name, grade: form.grade, sport: form.sport, state: form.state,
-        school: form.school, email: form.email, nil_literacy_score: computed.badge,
-        nil_stands: form.nilStands, heard_of_nil_rules: form.heardOfNilRules,
-        has_sponsorships: form.hasSponsorships, nil_confidence: form.nilConfidence,
-        nil_activities: form.nilActivities, has_bank_account: form.hasBankAccount,
-        knows_w9: form.knowsW9, brand_payment_response: form.brandPaymentResponse,
-        fin_confidence: form.finConfidence, fin_topics: form.finTopics,
-        intelligences: form.intelligences, team_role: form.teamRole,
-        challenge_response: form.challengeResponse, two_year_goal: form.twoYearGoal,
-        learn_topics: form.learnTopics, recommended_track: computed.track,
+      const res = await fetch('/api/athlete-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          nilLiteracyScore: computed.badge,
+          recommendedTrack: computed.track,
+        }),
       });
-      await supabase.from('email_captures').insert({ email: form.email, name: form.name, user_type: 'athlete', source: 'nil_questionnaire' });
-    } catch (err) {
+      if (res.ok) {
+        const body = await res.json();
+        didSave = Boolean(body.saved);
+      }
+    } catch { /* didSave stays false */ }
+    setSaved(didSave);
+    if (!didSave) {
+      // Keep a local copy so the athlete's answers aren't lost if they
+      // come back -- this is a fallback for them, not a claim to us that
+      // the profile was saved server-side.
       try { localStorage.setItem('npn_athlete_profile', JSON.stringify({ form, result: computed })); } catch { /* ignore */ }
     }
     setResult(computed);
@@ -1048,6 +1053,13 @@ export default function AthleteQuestionnaire() {
                       onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(253,185,39,0.3)'; el.style.background = 'transparent'; el.style.boxShadow = 'none'; }}
                     >Start Free Module</a>
                   </motion.div>
+
+                  {saved === false && (
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}
+                      style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '20px' }}>
+                      Your result above is real, but we couldn&apos;t save your profile just now — it&apos;s stored on this device so you don&apos;t lose it. Try again later to make sure it&apos;s saved with us.
+                    </motion.p>
+                  )}
                 </div>
               </motion.div>
             )

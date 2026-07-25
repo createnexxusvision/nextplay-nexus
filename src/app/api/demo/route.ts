@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { z } from "zod";
+import { query } from "@/lib/db";
 
 // ── Validation schema ──────────────────────────────────────────────────────
 
@@ -18,13 +18,6 @@ const DemoSchema = z.object({
 });
 
 // ── Lazy-init service clients (avoids crashes when env vars not yet set) ──
-
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false } });
-}
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -60,41 +53,29 @@ export async function POST(req: NextRequest) {
   const { name, email, school, title, phone, programType, sports, athleteRange, message } = result.data;
   const refId = `NPN-${Date.now()}`;
 
-  // ── 1. Persist to Supabase ───────────────────────────────────────────────
-  const supabase = getSupabase();
-  if (supabase) {
-    // Save demo request
-    const { error: dbError } = await supabase.from("demo_requests").insert({
-      name,
-      email,
-      school,
-      title: title ?? null,
-      phone: phone ?? null,
-      program_type: programType ?? null,
-      sports: sports ?? null,
-      athlete_range: athleteRange ?? null,
-      message: message ?? null,
-      ref_id: refId,
-      status: "new",
-      created_at: new Date().toISOString(),
-    });
+  // ── 1. Persist to Postgres ───────────────────────────────────────────────
+  try {
+    await query(
+      `insert into demo_requests
+         (name, email, school, title, phone, program_type, sports, athlete_range, message, ref_id, status)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'new')`,
+      [name, email, school, title ?? null, phone ?? null, programType ?? null,
+       sports ?? null, athleteRange ?? null, message ?? null, refId]
+    );
+  } catch (err) {
+    console.error("[demo-request] DB insert failed:", err instanceof Error ? err.message : err);
+    // Continue — don't block the user if DB write fails
+  }
 
-    if (dbError) {
-      console.error("[demo-request] DB insert failed:", dbError.message);
-      // Continue — don't block the user if DB write fails
-    }
-
-    // Also capture email in email_captures table
-    const { error: captureError } = await supabase.from("email_captures").insert({
-      email,
-      user_type: "program_director",
-      source: "demo_request",
-      created_at: new Date().toISOString(),
-    });
-
-    if (captureError) {
-      console.error("[demo-request] email_captures insert failed:", captureError.message);
-    }
+  try {
+    await query(
+      `insert into email_captures (email, user_type, source)
+       values ($1, 'program_director', 'demo_request')
+       on conflict (email, source) do nothing`,
+      [email]
+    );
+  } catch (err) {
+    console.error("[demo-request] email_captures insert failed:", err instanceof Error ? err.message : err);
   }
 
   // ── 2. Send notification email via Resend ────────────────────────────────

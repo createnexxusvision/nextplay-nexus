@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { query } from "@/lib/db";
 
 // ── Validation schema ──────────────────────────────────────────────────────
 
@@ -9,15 +9,6 @@ const EmailCaptureSchema = z.object({
   user_type: z.string().max(60).optional().default("general"),
   source: z.string().max(120).optional().default("landing_page"),
 });
-
-// ── Lazy-init Supabase (service role) ─────────────────────────────────────
-
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false } });
-}
 
 // ── POST handler ───────────────────────────────────────────────────────────
 
@@ -45,21 +36,16 @@ export async function POST(req: NextRequest) {
 
   const { email, user_type, source } = result.data;
 
-  const supabase = getSupabase();
-  if (supabase) {
-    const { error: dbError } = await supabase.from("email_captures").insert({
-      email,
-      user_type,
-      source,
-      created_at: new Date().toISOString(),
-    });
-
-    if (dbError) {
-      // Log but don't fail — upsert on conflict or duplicate is acceptable
-      console.error("[email-capture] DB insert failed:", dbError.message);
-    }
-  } else {
-    console.warn("[email-capture] Supabase not configured — email not persisted:", email);
+  try {
+    await query(
+      `insert into email_captures (email, user_type, source)
+       values ($1, $2, $3)
+       on conflict (email, source) do nothing`,
+      [email, user_type, source]
+    );
+  } catch (err) {
+    // Log but don't fail the request -- matches the prior Supabase behavior
+    console.error("[email-capture] DB insert failed:", err instanceof Error ? err.message : err);
   }
 
   console.info("[email-capture] processed:", { email, user_type, source });

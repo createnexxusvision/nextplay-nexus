@@ -62,7 +62,11 @@ const nextConfig: NextConfig = {
   },
 
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
+    // Was `removeConsole: process.env.NODE_ENV === "production"` -- that
+    // strips console.error too, which is how a real DB-insert failure in
+    // production was returning a false "success" response with zero trace
+    // anywhere. Keep error-level logs; only strip the noisy ones.
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
   },
 
   experimental: {
